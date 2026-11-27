@@ -415,7 +415,10 @@ public class ImeAdapterImpl
     // region is editable but may disallow the soft keyboard from being displayed. Composition
     // should still be allowed with a physical keyboard so mInputConnection will be non-null.
     private boolean focusedNodeAllowsSoftKeyboard() {
-        return mTextInputType != TextInputType.NONE && mTextInputMode != WebTextInputMode.NONE;
+        return mTextInputType != TextInputType.NONE
+                && (mTextInputMode != WebTextInputMode.NONE
+                        || mTextInputType == TextInputType.TEXT
+                        || mTextInputType == TextInputType.SEARCH);
     }
 
     private View getContainerView() {
@@ -622,7 +625,11 @@ public class ImeAdapterImpl
             mTextInputFlags = textInputFlags;
             if (mTextInputMode != textInputMode) {
                 mTextInputMode = textInputMode;
-                hide = textInputMode == WebTextInputMode.NONE && !isHardwareKeyboardAttached();
+                hide =
+                        textInputMode == WebTextInputMode.NONE
+                                && !isHardwareKeyboardAttached()
+                                && textInputType != TextInputType.TEXT
+                                && textInputType != TextInputType.SEARCH;
                 needsRestart = true;
             }
             if (mTextInputType != textInputType) {
